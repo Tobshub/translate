@@ -47,7 +47,7 @@ func New(conf Config) *Translation {
 }
 
 // Translate text from a language to another
-func (tr *Translation) Translate(source, sourceLang, targetLang string) (string, error) {
+func (tr *Translation) Translate(source, sourceLang, targetLang string) (map[string]interface{}, error) {
 	params := url.Values{}
 	params.Set("q", source)
 	params.Add("source", sourceLang)
@@ -59,7 +59,7 @@ func (tr *Translation) Translate(source, sourceLang, targetLang string) (string,
 	uri, err := url.Parse(tr.Url)
 	if err != nil {
 		tr.log.Println("Error parse url")
-		return "", err
+		return nil, err
 	}
 
 	uri.Path = path.Join(uri.Path, "/translate")
@@ -68,7 +68,7 @@ func (tr *Translation) Translate(source, sourceLang, targetLang string) (string,
 	res, err := http.Post(uri.String(), "application/x-www-form-urlencoded", bytes.NewBufferString(params.Encode()))
 	if err != nil {
 		fmt.Println("Post error")
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 	tr.log.Printf("Response code: %d", res.StatusCode)
@@ -76,19 +76,19 @@ func (tr *Translation) Translate(source, sourceLang, targetLang string) (string,
 	// Decode the JSON response
 	var result interface{}
 	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-		return "", err
+		return nil, err
 	}
 
 	m := result.(map[string]interface{})
-	if val, ok := m["translatedText"]; ok {
-		return fmt.Sprintf("%v", val), nil
-	}
-
 	if val, ok := m["error"]; ok {
-		return "", errors.New(fmt.Sprintf("%v", val))
+		return nil, errors.New(fmt.Sprintf("%v", val))
 	}
 
-	return "", errors.New("unknown answer")
+	if _, ok := m["translatedText"]; ok {
+		return m, nil
+	}
+
+	return nil, errors.New("unknown answer")
 }
 
 // Detect the language of the text
