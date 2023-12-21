@@ -60,7 +60,13 @@ func SetConfig(args []string) {
 		case "key":
 			CONFIG.Key = value
 		case "lang":
-			CONFIG.Lang = value
+			if !IsValidLang(value) {
+				fmt.Printf("Invalid target language: %s\n", value)
+				return
+			}
+			lang := GetLang(value)
+			fmt.Printf("Set default target language to: %s(%s)\n", lang["name"], lang["code"])
+			CONFIG.Lang = lang["code"].(string)
 		default:
 			fmt.Printf("Invalid argument: %s\n", rawArg)
 			return

@@ -44,11 +44,21 @@ type Response struct {
 }
 
 func (r *Response) Render() {
-	fmt.Printf("\tLang: %s (%d%%)\n", r.Lang, int(r.Confidence))
+	if r.Confidence > 0 {
+		fmt.Printf("\tLang: %s (%d%%)\n", r.Lang, int(r.Confidence))
+	} else {
+		fmt.Printf("\tLang: %s\n", r.Lang)
+	}
 	fmt.Printf("\tText: %s\n", r.Text)
 }
 
 func Translate(query, sourceLang, targetLang string) (*Response, error) {
+	if !IsValidLang(sourceLang) {
+		return nil, fmt.Errorf("Invalid source language: %s", sourceLang)
+	}
+	if !IsValidLang(targetLang) {
+		return nil, fmt.Errorf("Invalid target language: %s", targetLang)
+	}
 	fmt.Printf("Translate(%s -> %s): %s\n", sourceLang, targetLang, query)
 	translate := tr.New(tr.Config{Url: CONFIG.Url, Key: CONFIG.Key})
 	res, err := translate.Translate(query, sourceLang, targetLang)
@@ -59,7 +69,7 @@ func Translate(query, sourceLang, targetLang string) (*Response, error) {
 	data := Response{
 		Text:       res["translatedText"].(string),
 		Lang:       sourceLang,
-		Confidence: 100,
+		Confidence: 0,
 	}
 
 	if val, ok := res["detectedLanguage"]; ok {

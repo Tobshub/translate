@@ -1,4 +1,2 @@
 github.com/snakesel/libretranslate v0.0.2 h1:6LG/UMMpGtoj3NXvlzsxZgQEH0Qsi62jCDd5Yq5ALL8=
 github.com/snakesel/libretranslate v0.0.2/go.mod h1:B8F8Dda8RlkHRMzs/aw8DWj9HfyHSXpaJTFD391hEUI=
-golang.org/x/exp v0.0.0-20231219180239-dc181d75b848 h1:+iq7lrkxmFNBM7xx+Rae2W6uyPfhPeDWD+n+JgppptE=
-golang.org/x/exp v0.0.0-20231219180239-dc181d75b848/go.mod h1:iRJReGqOEeBhDZGkGbynYwcHlctCvnjTYIamk7uXpHI=
