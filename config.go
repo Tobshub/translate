@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"path"
 	"strings"
@@ -56,6 +57,11 @@ func SetConfig(args []string) {
 		key, value := arg[0], arg[1]
 		switch key {
 		case "url":
+			_, err := url.Parse(value)
+			if err != nil {
+				fmt.Printf("Invalid url: %s\n", err.Error())
+				return
+			}
 			CONFIG.Url = value
 		case "key":
 			CONFIG.Key = value
